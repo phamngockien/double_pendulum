@@ -520,7 +520,7 @@ double theta2_z_new(const double &theta1,
                   const double &w2,
                   const double &h)
 {
-    return theta2 + h * ( (25.0/216.0) * s1_theta2(w1)
+    return theta2 + h * ( (25.0/216.0) * s1_theta2(w2)
                                + (0.0) * s2_theta2(theta1, theta2, w1, w2, h)
                      + (1408.0/2565.0) * s3_theta2(theta1, theta2, w1, w2, h)
                      + (2197.0/4104.0) * s4_theta2(theta1, theta2, w1, w2, h)
@@ -556,28 +556,52 @@ double w2_z_new(const double &theta1,
 // calculate the error e_n+1 = y_n+1 - z_n+1
 //****************************************************************************
 //------------------------------------------------------
-// local error for angles
+// local error for angles (le_theta1, le_theta2)
 //------------------------------------------------------
-double le_theta (const double &theta1,
+double le_theta1(const double &theta1,
                  const double &theta2,
                  const double &w1,
                  const double &w2,
                  const double &h) {
-    double le_theta1 = theta1_new(theta1,theta2,w1,w2,h)  - theta1_z_new(theta1,theta2,w1,w2,h);
-    double le_theta2 = theta2_new(theta1,theta2,w1,w2,h)     - theta2_z_new(theta1,theta2,w1,w2,h);
+    return theta1_new(theta1,theta2,w1,w2,h)  - theta1_z_new(theta1,theta2,w1,w2,h);
+}
+//-----------------------------------------------------------------
+double le_theta2(const double &theta1,
+                 const double &theta2,
+                 const double &w1,
+                 const double &w2,
+                 const double &h) {
+    return theta2_new(theta1,theta2,w1,w2,h)  - theta2_z_new(theta1,theta2,w1,w2,h);
+}
+//-----------------------------------------------------------------
+// maximum absolute value of local errors of angles
+double le_theta (const double &le_theta1,
+                 const double &le_theta2) {
     return std::fmax(std::fabs(le_theta1),std::fabs(le_theta2));
 }
 //------------------------------------------------------
-// local error for angular velocities
+// local error for angular velocities (le_w1, le_w2)
 //------------------------------------------------------
-double le_w (const double &theta1,
+double le_w1 (const double &theta1,
              const double &theta2,
              const double &w1,
              const double &w2,
-             const double &h)
+             const double &h){
+    return w1_new(theta1,theta2,w1,w2,h) - w1_z_new(theta1,theta2,w1,w2,h);
+}
+//-----------------------------------------------------------------
+double le_w2 (const double &theta1,
+             const double &theta2,
+             const double &w1,
+             const double &w2,
+             const double &h){
+    return w2_new(theta1,theta2,w1,w2,h)-  w2_z_new(theta1,theta2,w1,w2,h);
+}
+//-----------------------------------------------------------------
+// maximum absolute value of local errors of angular velocities
+double le_w (const double &le_w1,
+             const double &le_w2)
 {
-    double le_w1 = w1_new(theta1,theta2,w1,w2,h) - w1_z_new(theta1,theta2,w1,w2,h);
-    double le_w2 = w2_new(theta1,theta2,w1,w2,h)-  w2_z_new(theta1,theta2,w1,w2,h);
     return std::fmax(std::fabs(le_w1),std::fabs(le_w2));
 }
 #endif //DOUBLE_PENDULUM_RUNGE_KUTTA_FEHLBERG_FUNCTIONS_HPP

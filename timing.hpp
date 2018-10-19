@@ -43,14 +43,14 @@ namespace timing
 
         // initial time and end time (t0, tf)
         double t0 = 0;
-        double tf = 3;
+        double tf = 30;
 
         // at time t = t0
         // Angles of pendulums: theta1=20 degree, theta2= 15 degree;
         // Initial angular velocities of pendulums: w1=w2= 0 degrees/s
         // unit here is converted into radian
-        theta1.insert(theta1.end(), pi*70.0/180.0);
-        theta2.insert(theta2.end(), pi*60.0/180.0);
+        theta1.insert(theta1.end(), pi*20.0/180.0);
+        theta2.insert(theta2.end(), pi*15.0/180.0);
         w1.insert(w1.end(), pi*0.0/180.0);
         w2.insert(w2.end(), pi*0.0/180.0);
 

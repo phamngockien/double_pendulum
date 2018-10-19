@@ -59,9 +59,19 @@ void RK54(const double &t0,
 
     // create a vector storing time at each step
     std::vector<double> t;
-
     // insert t0 as the first element of this time vector
     t.push_back(t0);
+
+    //create vectors storing errors in angles and angular velocities
+    std::vector<double> theta1_error;
+    std::vector<double> theta2_error;
+    std::vector<double> w1_error;
+    std::vector<double> w2_error;
+    // insert the first elements of these vector are 0 (no error at t = t0)
+    theta1_error.push_back(0);
+    theta2_error.push_back(0);
+    w1_error.push_back(0);
+    w2_error.push_back(0);
 
     //*********************************************************************************
     // determine initial step size (h)
@@ -122,29 +132,33 @@ void RK54(const double &t0,
         // and check the local error
         //*******************************************************************************
 
-        // if you want to calculate both angle and angular velocity error use the underline code
-        // double le_angle = le_theta(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
+        // compute local error for angles
+        double e_theta1=le_theta1(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
+        double e_theta2=le_theta2(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
 
-        // here I compute error with only angular velocities
-        double le_angular_vel = le_w(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
+        // compute local error for angular velocities
+        double e_w1=le_w1(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
+        double e_w2=le_w2(theta1[i+1],theta2[i+1],w1[i+1],w2[i+1],h);
 
-        // if you want to check error with both angle and angular velocity error use the underline code
-        //auto le=max({le_angle,le_angular_vel});
+        // calculate angle and angular velocity errors
+        double le_angle = le_theta(e_theta1,e_theta2);
+        double le_angular_vel = le_w(e_w1,e_w2);
 
-         // testing local error with w1,w2 only
-         auto le= le_angular_vel;
+        // storing values of local error at this step size
+        theta1_error.push_back(e_theta1);
+        theta2_error.push_back(e_theta2);
+        w1_error.push_back(e_w1);
+        w2_error.push_back(e_w2);
+
+        // compute maximum absolute error of angles and angular velocities
+        auto le=max({le_angle,le_angular_vel});
 
         // find maximum value of |y_n+1| and |y_n|
+        // for both theta and w (angles and angular velocities)
+        auto max_y_new=max({theta1[i+1],theta2[i+1],w1[i+1],w2[i+1]});
+        auto max_y_old=max({theta1[i],theta2[i],w1[i],w2[i]});
 
-        // for both w and theta using these under line codes
-        //auto max_y_new=max({theta1[i+1],theta2[i+1],w1[i+1],w2[i+1]});
-        //auto max_y_old=max({theta1[i],theta2[i],w1[i],w2[i]});
-
-        // for only using angular velocity (w)
-         auto max_y_new=max({w1[i+1],w2[i+1]});
-         auto max_y_old=max({w1[i],w2[i]});
-
-        // check local error
+        // check error
         auto check_error = err_check(le, std::max(ab_tol, re_tol * max({max_y_new,max_y_old})));
 
         //*******************************************************************************
@@ -172,6 +186,10 @@ void RK54(const double &t0,
             w2.pop_back();
             theta1.pop_back();
             theta2.pop_back();
+            theta1_error.pop_back();
+            theta2_error.pop_back();
+            w1_error.pop_back();
+            w2_error.pop_back();
             h = h_new;
             --i;
         }
@@ -206,7 +224,7 @@ void RK54(const double &t0,
     // storing results by calling write vectors function
     //*********************************************************************************
     std::string filename={"double_pendulum_results.txt"};
-    write_vectors_to_file(filename,t,w1,w2,theta1,theta2,x1,y1,x2,y2);
+    write_vectors_to_file(filename,t,w1,w2,theta1,theta2,x1,y1,x2,y2,w1_error,w2_error,theta1_error,theta2_error);
 };
 //
 // end of header file
