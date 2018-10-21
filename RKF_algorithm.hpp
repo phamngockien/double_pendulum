@@ -82,7 +82,7 @@ void RK54(const double &t0,
     double dw_2=compute_diff_eq_bottom(theta1[0],theta2[0],w1[0],w2[0]);
 
     // the order of [w1, w2, theta1, theta2] - (y_n+1) at step n+1 is p = 5
-    // compute initial step size h
+    // compute initial step size h (after Cleve Moler, 2008)
     double a = pow(re_tol, 1.0 / 5.0) / max({dw_1/max({w1[0],threshold}),dw_2/max({w2[0],threshold})});
     double h = 0.8 * std::min(std::fabs(t0 - tf), std::fabs(a));
 

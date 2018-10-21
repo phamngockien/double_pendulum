@@ -1,7 +1,9 @@
 //
 // Created by useer on 10/17/2018.
 //
-
+//***************************************************************************************************
+// This file contains a function to export the results in to a file
+//**************************************************************************************************
 #ifndef DOUBLE_PENDULUM_OUT_PUT_DATA_HPP
 #define DOUBLE_PENDULUM_OUT_PUT_DATA_HPP
 #include <string>

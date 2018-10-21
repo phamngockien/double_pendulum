@@ -9,11 +9,11 @@
 #ifndef DOUBLE_PENDULUM_PENDULUM_PARAMETERS_HPP
 #define DOUBLE_PENDULUM_PENDULUM_PARAMETERS_HPP
 struct pendulum {
-    // lengths of massless rods in meters
+    // lengths of massless and rigid rods in meters
     double l1 = 1;
     double l2 = 1;
 
-    // masses of two objects in kg
+    // masses of two bobs in kg
     double m1 = 1;
     double m2 = 1;
 };
